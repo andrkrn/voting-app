@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title Voting App
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css')
+    script(src="https://code.jquery.com/jquery-3.1.1.min.js", integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=",crossorigin="anonymous")
+  body
+    section.hero.is-medium.has-text-centered
+      .hero-head
+        .container
+          nav.nav
+            .nav-left
+              a.nav-item.is-brand(href='#')
+                | VOTING APP
+            span.nav-toggle
+              span
+              span
+              span
+            .nav-right.nav-menu
+              if signed_in
+                a.nav-item(href='#') Welcome, #{current_user.name}
+              else
+                a.nav-item(href='/auth/facebook') Sign in with Facebook
+
+    block content
