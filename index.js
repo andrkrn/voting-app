@@ -6,19 +6,27 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const passport = require('passport')
 const facebookStrategy = require('passport-facebook').Strategy
+const session = require('express-session')
+const mongoStore = require('connect-mongo')(session);
 
 const User = require('./models/user')
+const Poll = require('./models/poll')
+
+const pollsRoute = require('./routes/polls')
 
 const config = require('./config')
+const isAuthenticated = require('./utilities/util').isAuthenticated
 
 const app = express()
 
 passport.serializeUser(function(user, cb) {
-  cb(null, user);
+  cb(null, user.id);
 });
 
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
+passport.deserializeUser(function(id, cb) {
+  User.findById(id, (err, doc) => {
+    cb(err, doc)
+  })
 });
 
 passport.use(new facebookStrategy({
@@ -66,7 +74,12 @@ mongoose.connect(database_url)
 app.use(require('cookie-parser')())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use(session({
+  secret: 'keyboard cat',
+  store: new mongoStore({ mongooseConnection: mongoose.connection }),
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.set('port', config.port)
 app.set('views', path.join(__dirname, 'views'))
@@ -90,8 +103,19 @@ app.get('/auth/facebook/callback',
   })
 );
 
+app.use('/polls', pollsRoute)
+
+app.get('/my-polls', isAuthenticated, function(req, res, cb) {
+  Poll.find({ owner: req.user.id }, (err, polls) => {
+    if (err) { console.log(err) }
+
+    res.render('polls/my-polls', {
+      polls: polls
+    })
+  })
+})
+
 app.use('/', (req, res) => {
-  console.log(req.isAuthenticated())
   res.render('pages/index')
 })
 

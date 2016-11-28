@@ -1,0 +1,11 @@
+extends ../layouts/application.pug
+
+block content
+  section.section
+    .container
+      h1.title My Polls
+
+      ul
+        each poll in polls
+          li
+            a(href=`/polls/${poll.id}`)= poll.title

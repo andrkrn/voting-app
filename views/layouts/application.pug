@@ -19,6 +19,8 @@ html
               span
             .nav-right.nav-menu
               if signed_in
+                a.nav-item(href='/polls/new') New Poll
+                a.nav-item(href='/my-polls') My Polls
                 a.nav-item(href='#') Welcome, #{current_user.name}
               else
                 a.nav-item(href='/auth/facebook') Sign in with Facebook

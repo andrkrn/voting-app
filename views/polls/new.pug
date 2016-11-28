@@ -1,0 +1,22 @@
+extends ../layouts/application.pug
+
+block content
+  section.section
+    .container
+      h1.title New Poll
+      form(action='/polls', method='post')
+        label.label Title
+        .control
+          input.input(type='text', name='title', placeholder='Poll title...', required= true)
+
+        label.label Options
+        .control
+          input.input(type='text', name='option[]', required= true)
+        .control
+          input.input(type='text', name='option[]', required= true)
+        .control
+          input.input(type='text', name='option[]')
+        .control
+          input.input(type='text', name='option[]')
+
+        input.button.is-info(type='submit')

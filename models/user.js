@@ -1,7 +1,4 @@
 const mongoose = require('mongoose')
-const autoIncrement = require('mongoose-auto-increment')
-
-autoIncrement.initialize(mongoose.connection)
 
 const UserSchema = new mongoose.Schema({
   provider: {
@@ -21,10 +18,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true
   }
-})
-
-UserSchema.plugin(autoIncrement.plugin, {
-  model: 'User',
 })
 
 const User = mongoose.model('User', UserSchema)
