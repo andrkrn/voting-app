@@ -1,0 +1,18 @@
+extends ../layouts/application.pug
+
+block content
+  section.section
+    .container
+      h1.title= poll.title
+
+      form(action=`/polls/${poll.id}/vote`, method='post')
+        label.label Options
+        .control
+          .select
+            select(name='vote', required)
+              option(disabled, selected, value='', hidden) Choose an option...
+              each value, key in poll.results
+                option(value=key)= key
+
+        .control
+          input.button.is-info(type='submit')

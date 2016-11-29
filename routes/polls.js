@@ -13,20 +13,6 @@ router.get('/', (req, res) => {
   res.send('Index page for polls');
 })
 
-router.get('/:poll_id', (req, res) => {
-  Poll.findById(req.params.poll_id, (err, poll) => {
-    if (err) { console.log(err) }
-
-    res.render('polls/show', {
-      poll: poll
-    })
-  })
-})
-
-router.get('/new', (req, res) => {
-  res.render('polls/new')
-})
-
 router.post('/', isAuthenticated, (req, res) => {
   let spaceOnly = /^\s*$/g
   let pollAttributes = {}
@@ -46,6 +32,20 @@ router.post('/', isAuthenticated, (req, res) => {
     if (err) { console.log(err) }
 
     res.redirect('/my-polls')
+  })
+})
+
+router.get('/new', (req, res) => {
+  res.render('polls/new')
+})
+
+router.get('/:poll_id', (req, res) => {
+  Poll.findById(req.params.poll_id, (err, poll) => {
+    if (err) { console.log(err) }
+
+    res.render('polls/show', {
+      poll: poll
+    })
   })
 })
 
