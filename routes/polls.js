@@ -49,4 +49,42 @@ router.get('/:poll_id', (req, res) => {
   })
 })
 
+router.post('/:poll_id/vote', (req, res) => {
+  Poll.findById(req.params.poll_id, (err, poll) => {
+    if (err) {
+      res.send(404)
+    } else {
+      var clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      var userHaveNotVoted = req.isAuthenticated() && poll.voted_by.indexOf(req.user.id) === -1
+      var ipHaveNotVoted = poll.voted_by.indexOf(clientIp) === -1
+      var inc = {}
+      var who_voting = []
+      inc[`results.${req.body.vote}`] = 1
+
+      if (userHaveNotVoted) {
+        who_voting.push(req.user.id)
+      }
+
+      if (ipHaveNotVoted) {
+        who_voting.push(clientIp)
+      }
+
+      if (userHaveNotVoted || ipHaveNotVoted) {
+        console.log('Updating record...');
+
+        poll.update({
+          $inc: inc,
+          $push: { voted_by: { $each: who_voting }}
+        }).exec()
+
+        console.log('Record updated, redirecting...')
+      } else {
+        console.log('User or ip address have voted to the poll.')
+      }
+
+      res.redirect(`/polls/${poll.id}`)
+    }
+  })
+})
+
 module.exports = router
